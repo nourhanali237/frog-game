@@ -1,0 +1,128 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"><title>Froggy’s Letter Adventure</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Baloo+2:wght@600;800&display=swap">
+<style>
+:root{--panel:#fffbea;--ink:#244b2f;--card:#fff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--panel:#1f3a2a;--ink:#e8f7d9;--card:#2b4d39}}
+:root[data-theme="dark"]{--panel:#1f3a2a;--ink:#e8f7d9;--card:#2b4d39}
+*{box-sizing:border-box}html,body{height:100%;margin:0}
+body{font-family:'Baloo 2','Trebuchet MS',system-ui,sans-serif;background:var(--panel);color:var(--ink);display:grid;grid-template-rows:auto minmax(0,1fr) auto;overflow:hidden}
+header{display:flex;justify-content:space-between;align-items:center;padding:6px 16px}
+h1{margin:0;font-size:clamp(18px,2.4vw,30px)}
+#scene{position:relative;container-type:size;--pw:min(9.6cqw,24cqh);overflow:hidden;background:linear-gradient(#8fd8ff,#e3f7ff 60%)}
+#scene>*{position:absolute}
+.sun{right:4%;top:3%;font-size:7cqw;animation:spin 40s linear infinite}
+.cloud{font-size:7cqw;opacity:.9;animation:drift 50s linear infinite}
+@keyframes drift{from{left:-12%}to{left:105%}}@keyframes spin{to{transform:rotate(360deg)}}
+.water{left:0;right:0;bottom:0;height:50%;background:linear-gradient(#3aa8f0,#1766b8);overflow:hidden}
+.water:after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(100deg,rgba(255,255,255,.16) 0 30px,transparent 30px 90px);animation:wave 6s linear infinite}
+@keyframes wave{to{background-position:180px 0}}
+.bank{bottom:0;width:14%;height:46%;background:linear-gradient(#72d650 0 14%,#8a5a2b 15%)}
+.bank.l{left:0;border-top-right-radius:60% 35%}.bank.r{right:0;border-top-left-radius:60% 35%}
+.bub{border-radius:50%;border:2px solid rgba(255,255,255,.7);animation:rise 3.5s linear forwards}
+@keyframes rise{to{transform:translateY(-110px);opacity:0}}
+.fl,.bf{font-size:3.2cqw;font-style:normal}
+.bf{animation:fly 9s ease-in-out infinite alternate}
+@keyframes fly{to{transform:translate(18cqw,-4cqh) rotate(12deg)}}
+.pad{width:var(--pw);height:calc(var(--pw)*.62);transform:translateX(-50%);border-radius:50%;background:radial-gradient(ellipse at 40% 35%,#d6f9b4,#5cc65a 70%,#3c9a46);box-shadow:0 6px 0 #2f7d3a,0 10px 14px rgba(0,0,0,.25);display:grid;place-items:center;z-index:2}
+.pad .l{font-family:Amiri,'Noto Naskh Arabic','Traditional Arabic',serif;font-weight:700;font-size:calc(var(--pw)*.62);line-height:1;color:#14532d;direction:rtl;transform:translateY(-8%)}
+.pad.done .l{opacity:.3}.pad.cur{animation:pulse 1.4s ease-in-out infinite}
+@keyframes pulse{50%{box-shadow:0 6px 0 #2f7d3a,0 0 26px 8px #ffe45c}}
+#frog{width:calc(var(--pw)*.9);transform:translateX(-50%);transition:left .75s ease-in-out,bottom .75s ease-in-out;z-index:6}
+#frog.hid{opacity:0}#fi svg{display:block;width:100%;overflow:visible}
+#msg{left:50%;top:6%;transform:translateX(-50%);z-index:20;background:#fff;color:#1d5c26;border:4px solid #4cc54f;border-radius:30px;padding:.2em 1em;font-weight:800;font-size:min(5cqw,10cqh);opacity:0;pointer-events:none;white-space:nowrap}
+#msg.bad{border-color:#f59e0b;color:#9a4a00}#msg.show{animation:pop .5s forwards}
+@keyframes pop{0%{opacity:0;transform:translateX(-50%) scale(.5)}60%{transform:translateX(-50%) scale(1.1)}100%{opacity:1;transform:translateX(-50%) scale(1)}}
+.ring{width:8cqw;height:3cqw;margin-left:-4cqw;border:4px solid #fff;border-radius:50%;z-index:7;animation:ring .9s forwards}
+@keyframes ring{to{transform:scale(2.4);opacity:0}}
+.fx{z-index:30;font-size:3cqw;pointer-events:none}
+#zoom{left:50%;top:50%;transform:translate(-50%,-50%);z-index:25;background:#fff;border:8px solid #4cc54f;border-radius:6cqmin;padding:0 6cqmin;font:700 min(48cqh,26cqw)/1.35 Amiri,'Noto Naskh Arabic',serif;color:#14532d;cursor:pointer;direction:rtl;box-shadow:0 20px 50px rgba(0,0,0,.35)}
+.panel{padding:8px 16px 12px;display:grid;gap:8px;background:var(--panel)}
+.stats{display:flex;gap:8px;flex-wrap:wrap}
+.st{flex:1;min-width:100px;background:var(--card);border-radius:14px;padding:4px 10px;text-align:center;box-shadow:0 2px 6px rgba(0,0,0,.12)}
+.st small{display:block;font-size:12px;opacity:.75}.st b{font-size:clamp(18px,2.2vw,28px)}
+#cl{font-family:Amiri,'Noto Naskh Arabic',serif;font-size:34px!important;line-height:1.2;display:block}
+.bar{height:16px;background:#cfe9c5;border-radius:10px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#4cc54f,#ffd23f);transition:width .6s}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.b{font:inherit;font-weight:800;border:0;border-radius:16px;padding:10px 18px;font-size:clamp(14px,1.5vw,19px);cursor:pointer;color:#fff;background:#3b82c4;box-shadow:0 5px 0 rgba(0,0,0,.28);flex:1}
+.b:active:not(:disabled){transform:translateY(3px);box-shadow:0 2px 0 rgba(0,0,0,.28)}.b:disabled{opacity:.45;cursor:not-allowed}
+.b.ok{background:#2eaf4a;flex:2;font-size:clamp(20px,2.4vw,30px)}.b.no{background:#e24b4b;flex:2;font-size:clamp(20px,2.4vw,30px)}
+.b.am{background:#e59a12}.b.pu{background:#8a5bd0}.b.gr{background:#6b7a70}
+.ov{position:fixed;inset:0;z-index:100;display:grid;place-items:center;align-content:center;gap:14px;text-align:center;color:#fff;background:rgba(20,80,45,.62);backdrop-filter:blur(5px);padding:20px}
+.ov.hide{display:none}.ov h2{margin:0;font-size:clamp(30px,6vw,70px);text-shadow:0 4px 0 rgba(0,0,0,.3)}.ov p{margin:0;font-size:clamp(16px,2.4vw,28px)}
+.ov .b{flex:none;font-size:clamp(22px,3vw,36px);padding:14px 40px;background:#2eaf4a}
+.big{font-size:clamp(40px,7vw,90px)}
+</style></head><body>
+<header><h1>🐸 Froggy’s Letter Adventure</h1><button class="b gr" id="snd" style="flex:none;padding:6px 14px">🔊 Sound ON</button></header>
+<main id="scene">
+<div class="sun">☀️</div><div class="cloud" style="top:4%;animation-delay:-5s">☁️</div><div class="cloud" style="top:14%;animation-delay:-30s">☁️</div>
+<div class="bank l"></div><div class="bank r"></div><div class="water" id="water"></div>
+<div id="msg"></div><div id="frog" class="hid"><div id="fi"><svg viewBox="0 0 100 80"><ellipse cx="25" cy="73" rx="14" ry="6" fill="#3fae45"/><ellipse cx="75" cy="73" rx="14" ry="6" fill="#3fae45"/><ellipse cx="50" cy="55" rx="34" ry="22" fill="#4cc54f" stroke="#2c8a35" stroke-width="3"/><ellipse cx="50" cy="63" rx="20" ry="11" fill="#c8f5b0"/><circle cx="30" cy="30" r="14" fill="#fff" stroke="#2c8a35" stroke-width="3"/><circle cx="70" cy="30" r="14" fill="#fff" stroke="#2c8a35" stroke-width="3"/><circle id="p1" cx="31" cy="32" r="6" fill="#222"/><circle id="p2" cx="69" cy="32" r="6" fill="#222"/><ellipse cx="22" cy="52" rx="6" ry="4" fill="#ff9db0" opacity=".7"/><ellipse cx="78" cy="52" rx="6" ry="4" fill="#ff9db0" opacity=".7"/><path id="mo" d="M34 50Q50 68 66 50" fill="none" stroke="#1d5c26" stroke-width="3.5" stroke-linecap="round"/></svg></div></div>
+<div id="zoom" hidden></div>
+</main>
+<section class="panel">
+<div class="stats"><div class="st"><small>Current letter</small><b id="cl">–</b></div><div class="st"><small>Correct</small><b id="sc">0</b></div><div class="st"><small>Incorrect attempts</small><b id="sw">0</b></div><div class="st"><small>Letters completed</small><b id="sd">0 / 7</b></div><div class="st"><small>Stars</small><b id="ss">—</b></div></div>
+<div class="bar"><i id="bar"></i></div>
+<div class="row"><button class="b no" id="bw">WRONG ✗</button><button class="b ok" id="bc">CORRECT ✓</button></div>
+<div class="row"><button class="b pu" id="bs">SHOW LETTER</button><button class="b am" id="bk">NEXT / SKIP</button><button class="b" id="br">RETRY</button><button class="b gr" id="bp">PAUSE</button><button class="b gr" id="bx">RESTART</button></div>
+</section>
+<div class="ov" id="welcome"><div class="big">🐸</div><h2>Froggy’s Letter Adventure!</h2><p>Help Froggy cross the river by reading Arabic letters!</p><button class="b" id="start">START GAME</button></div>
+<div class="ov hide" id="pause"><h2>⏸ Paused</h2><button class="b" id="resume">RESUME</button></div>
+<div class="ov hide" id="win"><div class="big">🎉🐸🎉</div><h2>YOU DID IT! FROGGY CROSSED THE RIVER! 🐸</h2><p id="wt"></p><p class="big" id="wst"></p><button class="b" id="again">PLAY AGAIN</button></div>
+<script>
+const $=id=>document.getElementById(id),sc=$('scene'),F=$('frog'),FI=$('fi'),sleep=ms=>new Promise(r=>setTimeout(r,ms)),rnd=n=>Math.floor(Math.random()*n),pick=a=>a[rnd(a.length)];
+const LET=['ا','ب','ت','ث','ج','ح','خ'];
+const PX=[6,19,29.3,39.6,49.9,60.2,70.5,80.8,94],PY=[43,30,24,31,25,30,24,31,43],PK=[0,.25,.25,.25,.25,.25,.25,.25,0];
+const PRAISE=['Amazing!','Excellent!','Well done!','You did it!'],OOPS=['Oops! Let’s try again!','Don’t worry! You can do it!','Try one more time!'];
+let order=[],pos=0,ok=0,bad=0,sessOk=0,playing=false,busy=false,paused=false,soundOn=true,zt,mt;
+function shuffle(){let a;do{a=[...LET];for(let i=6;i>0;i--){const j=rnd(i+1);[a[i],a[j]]=[a[j],a[i]]}}while(a.join()==LET.join());return a}
+function el(t,c,h){const e=document.createElement(t);e.className=c;if(h)e.textContent=h;return e}
+/* ---- sound ---- */
+let AC;function ac(){if(!AC)try{AC=new(window.AudioContext||window.webkitAudioContext)()}catch(e){}if(AC&&AC.state=='suspended')AC.resume();return AC}
+function tone(f,t,d,ty,v,f2){const a=ac();if(!a||!soundOn)return;const o=a.createOscillator(),g=a.createGain(),s=a.currentTime+t;o.type=ty;o.frequency.setValueAtTime(f,s);if(f2)o.frequency.exponentialRampToValueAtTime(f2,s+d);g.gain.setValueAtTime(v,s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.connect(g).connect(a.destination);o.start(s);o.stop(s+d+.05)}
+function noise(d){const a=ac();if(!a||!soundOn)return;const n=a.sampleRate*d,b=a.createBuffer(1,n,a.sampleRate),x=b.getChannelData(0);for(let i=0;i<n;i++)x[i]=(Math.random()*2-1)*(1-i/n);const s=a.createBufferSource(),f=a.createBiquadFilter(),g=a.createGain();f.type='lowpass';f.frequency.value=1800;g.gain.value=.5;s.buffer=b;s.connect(f).connect(g).connect(a.destination);s.start()}
+const sfx={jump:()=>tone(280,0,.25,'sine',.25,750),splash:()=>{noise(.5);tone(420,0,.3,'triangle',.12,90)},ok:()=>[523,659,784,1047].forEach((f,i)=>tone(f,i*.1,.25,'triangle',.22)),win:()=>[523,659,784,1047,784,1047,1319].forEach((f,i)=>tone(f,i*.13,.35,'triangle',.25))};
+$('snd').onclick=()=>{soundOn=!soundOn;$('snd').textContent=soundOn?'🔊 Sound ON':'🔇 Sound OFF'};
+/* ---- scene ---- */
+const pads=[];
+for(let i=0;i<7;i++){const p=el('div','pad');p.style.left=PX[i+1]+'%';p.style.bottom=PY[i+1]+'%';p.append(el('span','l'));sc.append(p);pads.push(p)}
+[['🌸',2,47],['🌼',8,49],['🌷',11,46],['🌼',87,48],['🌸',92,47],['🌷',96,49]].forEach(([e,x,y])=>{const f=el('i','fl',e);f.style.left=x+'%';f.style.bottom=y+'%';sc.append(f)});
+[['🦋',15,60],['🦋',55,70],['🦋',75,55]].forEach(([e,x,y],i)=>{const f=el('i','bf',e);f.style.left=x+'%';f.style.bottom=y+'%';f.style.animationDelay=-i*3+'s';sc.append(f)});
+setInterval(()=>{if(document.hidden)return;const b=el('i','bub'),s=6+rnd(10);b.style.cssText=`left:${rnd(100)}%;bottom:${rnd(40)}%;width:${s}px;height:${s}px`;$('water').append(b);setTimeout(()=>b.remove(),3600)},600);
+function put(x,y,k){F.style.left=x+'%';F.style.bottom=`calc(${y}% + var(--pw)*${k})`}
+function stop(i){put(PX[i],PY[i],PK[i])}
+function jumpArc(){FI.animate([{transform:'translateY(0) scale(1.1,.9)'},{transform:`translateY(${-sc.clientHeight*.2}px) scale(.95,1.1)`,offset:.5},{transform:'translateY(0) scale(1.1,.9)'}],{duration:750,easing:'ease-in-out'})}
+function mood(m){const M={happy:['M34 50Q50 68 66 50','none',6],surprised:['M44 56a6 8 0 1 0 12 0a6 8 0 1 0-12 0','#5a1a24',3],excited:['M30 47Q50 80 70 47Z','#8a2231',7]}[m];$('mo').setAttribute('d',M[0]);$('mo').setAttribute('fill',M[1]);$('p1').setAttribute('r',M[2]);$('p2').setAttribute('r',M[2])}
+function say(t,b){const m=$('msg');m.textContent=t;m.className=(b?'bad ':'')+'show';m.style.animation='none';m.offsetWidth;m.style.animation='';clearTimeout(mt);mt=setTimeout(()=>m.className=b?'bad':'',3200)}
+function fly(e,x,y,dx,dy,d){const s=el('b','fx',e);s.style.left=x+'%';s.style.bottom=y+'%';sc.append(s);s.animate([{transform:'translate(0,0) rotate(0)',opacity:1},{transform:`translate(${dx/2}px,${dy}px) rotate(180deg)`,opacity:1,offset:.5},{transform:`translate(${dx}px,${dy+90}px) rotate(360deg)`,opacity:0}],{duration:d,easing:'ease-out'}).onfinish=()=>s.remove()}
+function burst(n){for(let i=0;i<n;i++)fly(pick(['⭐','✨','🎉','🌟']),30+rnd(40),45+rnd(20),(Math.random()-.5)*400,-60-rnd(120),1200+rnd(600))}
+function splash(x,y){for(let i=0;i<9;i++)fly('💧',x,y,(Math.random()-.5)*220,-50-rnd(90),900);const r=el('div','ring');r.style.left=x+'%';r.style.bottom=y+'%';sc.append(r);setTimeout(()=>r.remove(),950)}
+/* ---- state / render ---- */
+function render(){pads.forEach((p,i)=>{const d=i<pos,c=i==pos&&playing;p.classList.toggle('done',d);p.classList.toggle('cur',c);p.firstChild.textContent=d||c?order[i]:''});
+$('cl').textContent=playing?order[pos]:'–';$('sc').textContent=ok;$('sw').textContent=bad;$('sd').textContent=pos+' / 7';$('bar').style.width=pos/7*100+'%';$('ss').textContent='⭐'.repeat(Math.floor(sessOk/5))||'—'}
+function ctrls(){['bc','bw','bs','bk','br','bx'].forEach(i=>$(i).disabled=busy||paused||!playing);$('bp').disabled=busy||!playing;$('bp').textContent=paused?'RESUME':'PAUSE'}
+function hideZoom(){$('zoom').hidden=true;clearTimeout(zt)}
+async function run(fn){if(busy||paused||!playing)return;busy=true;ctrls();hideZoom();try{await fn()}finally{busy=false;ctrls()}}
+function newRound(){order=shuffle();pos=0;ok=0;bad=0;playing=true;busy=false;paused=false;hideZoom();['pause','win','welcome'].forEach(i=>$(i).classList.add('hide'));
+F.style.transition='none';stop(0);F.offsetWidth;F.style.transition='';F.classList.remove('hid');FI.animate([{transform:'scale(0)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:500});mood('happy');render();ctrls();say('Read the letter on the lily pad!')}
+/* ---- actions ---- */
+async function hop(i){sfx.jump();stop(i);jumpArc();await sleep(780)}
+async function onCorrect(){ok++;sessOk++;await hop(pos+1);pos++;mood('happy');sfx.ok();burst(10);
+if(sessOk%5==0){say('⭐ A new star! Amazing!')}else say(pick(PRAISE));
+if(pos==7){render();await win();return}render();await sleep(500)}
+async function onWrong(){bad++;mood('surprised');const a=pos,b=pos+1,mx=PX[a]+(PX[b]-PX[a])*.62,my=PY[b]-5;
+sfx.jump();put(mx,my,0);jumpArc();await sleep(600);sfx.splash();splash(mx,my+4);
+const an=FI.animate([{transform:'translateY(0) rotate(0)',opacity:1},{transform:`translateY(${sc.clientHeight*.15}px) rotate(200deg)`,opacity:0}],{duration:600,fill:'forwards'});
+say(pick(OOPS),1);render();await sleep(1100);an.cancel();F.style.transition='none';stop(a);F.offsetWidth;F.style.transition='';FI.animate([{transform:'scale(0)'},{transform:'scale(1.2)'},{transform:'scale(1)'}],{duration:450});await sleep(600);mood('happy')}
+async function win(){mood('excited');await hop(8);sfx.win();burst(45);await sleep(1400);playing=false;
+$('wt').textContent=`Correct answers: ${ok}  •  Incorrect attempts: ${bad}`;$('wst').textContent='⭐'.repeat(Math.floor(sessOk/5))||'☆';$('win').classList.remove('hide');render();ctrls()}
+$('bc').onclick=()=>run(onCorrect);$('bw').onclick=()=>run(onWrong);
+$('br').onclick=()=>run(async()=>{mood('happy');say('Let’s read it again!');render()});
+$('bk').onclick=()=>run(async()=>{if(pos>=6){say('This is the last letter!');return}const j=pos+1+rnd(6-pos);[order[pos],order[j]]=[order[j],order[pos]];mood('happy');say('Here’s a new letter!');render()});
+$('bs').onclick=()=>{if(busy||paused||!playing)return;const z=$('zoom');if(!z.hidden)return hideZoom();z.textContent=order[pos];z.hidden=false;zt=setTimeout(hideZoom,6000)};
+$('zoom').onclick=hideZoom;
+function togglePause(){if(busy||!playing)return;paused=!paused;$('pause').classList.toggle('hide',!paused);ctrls()}
+$('bp').onclick=togglePause;$('resume').onclick=togglePause;
+$('bx').onclick=()=>{if(!busy&&playing)newRound()};
+$('start').onclick=()=>{ac();newRound()};$('again').onclick=()=>{ac();newRound()};
+render();ctrls();stop(0);
+</script></body></html>
